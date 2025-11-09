@@ -1,1 +1,137 @@
-<h1>hi from nginx Docker!</h1>
+<!doctype html>
+<html lang="ko">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>Portfolio — Sangbin Lee</title>
+		<meta name="description" content="Portfolio page for Sangbin Lee — projects, skills and contact." />
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body>
+		<header class="site-header">
+			<div class="container header-inner">
+				<a class="logo" href="#">Sangbin<span>Lee</span></a>
+				<nav class="site-nav" id="site-nav">
+					<a href="#about">About</a>
+					<a href="#projects">Projects</a>
+					<a href="#skills">Skills</a>
+					<a href="#contact">Contact</a>
+				</nav>
+				<button class="nav-toggle" id="nav-toggle" aria-label="메뉴 열기">☰</button>
+			</div>
+		</header>
+
+		<main>
+			<section class="hero" id="home">
+				<div class="container hero-inner">
+					<div class="hero-text">
+						<h1>안녕하세요, 저는 개발자<br><span>이상빈</span>입니다.</h1>
+						<p>프론트엔드 중심의 웹 개발자입니다. 깔끔한 UI와 사용자 경험을 만드는 것을 좋아합니다.</p>
+						<p class="cta-row">
+							<a class="btn" href="#projects">프로젝트 보기</a>
+							<a class="btn btn-outline" href="#contact">연락하기</a>
+						</p>
+					</div>
+					<div class="hero-illustration" aria-hidden="true">
+						<img src="https://via.placeholder.com/420x300?text=Portfolio" alt="portfolio illustration">
+					</div>
+				</div>
+			</section>
+
+			<section class="container about" id="about">
+				<h2>About</h2>
+				<div class="about-grid">
+					<div>
+						<p>웹 개발을 공부하고 실제 서비스를 만들어보는 것을 즐깁니다. HTML, CSS, JavaScript를 중심으로 React, Vue 등의 라이브러리를 사용합니다.</p>
+						<ul>
+							<li>관심사: UI/UX, 성능 최적화, 접근성</li>
+							<li>도구: Git, VSCode, Docker</li>
+						</ul>
+					</div>
+					<div class="profile-card">
+						<img src="https://via.placeholder.com/160" alt="profile" class="avatar">
+						<h3>이상빈</h3>
+						<p>Frontend Developer</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="container projects" id="projects">
+				<h2>Projects</h2>
+				<div class="projects-grid">
+					<article class="card">
+						<img src="https://via.placeholder.com/600x320?text=Project+1" alt="project 1">
+						<div class="card-body">
+							<h3>Project One</h3>
+							<p>웹 앱의 간단한 설명: React 기반의 SPA, 반응형 레이아웃, REST API 연동.</p>
+							<p class="card-links"><a href="#">데모</a> · <a href="#">깃허브</a></p>
+						</div>
+					</article>
+					<article class="card">
+						<img src="https://via.placeholder.com/600x320?text=Project+2" alt="project 2">
+						<div class="card-body">
+							<h3>Project Two</h3>
+							<p>간단한 설명: 퍼포먼스 최적화와 접근성 개선을 적용한 웹 프로젝트.</p>
+							<p class="card-links"><a href="#">데모</a> · <a href="#">깃허브</a></p>
+						</div>
+					</article>
+					<article class="card">
+						<img src="https://via.placeholder.com/600x320?text=Project+3" alt="project 3">
+						<div class="card-body">
+							<h3>Project Three</h3>
+							<p>간단한 설명: 디자인 시스템과 컴포넌트 라이브러리를 구축한 경험.</p>
+							<p class="card-links"><a href="#">데모</a> · <a href="#">깃허브</a></p>
+						</div>
+					</article>
+				</div>
+			</section>
+
+			<section class="container skills" id="skills">
+				<h2>Skills</h2>
+				<div class="skills-grid">
+					<div class="skill">
+						<label>HTML / CSS</label>
+						<div class="bar"><span style="width:90%">90%</span></div>
+					</div>
+					<div class="skill">
+						<label>JavaScript</label>
+						<div class="bar"><span style="width:85%">85%</span></div>
+					</div>
+					<div class="skill">
+						<label>React / Vue</label>
+						<div class="bar"><span style="width:75%">75%</span></div>
+					</div>
+					<div class="skill">
+						<label>DevOps / Docker</label>
+						<div class="bar"><span style="width:60%">60%</span></div>
+					</div>
+				</div>
+			</section>
+
+			<section class="container contact" id="contact">
+				<h2>Contact</h2>
+				<div class="contact-grid">
+					<form class="contact-form" id="contact-form">
+						<label>이름<input type="text" name="name" required></label>
+						<label>이메일<input type="email" name="email" required></label>
+						<label>메시지<textarea name="message" rows="6" required></textarea></label>
+						<p><button class="btn" type="submit">Send</button></p>
+					</form>
+					<div class="contact-info">
+						<p>이메일: <a href="mailto:you@example.com">you@example.com</a></p>
+						<p>GitHub: <a href="#">github.com/yourname</a></p>
+						<p>원하시면 포트폴리오 PDF도 제공합니다.</p>
+					</div>
+				</div>
+			</section>
+		</main>
+
+		<footer class="site-footer">
+			<div class="container">
+				<p>© 2025 Sangbin Lee · Built with HTML, CSS & JavaScript</p>
+			</div>
+		</footer>
+
+		<script src="script.js"></script>
+	</body>
+</html>
