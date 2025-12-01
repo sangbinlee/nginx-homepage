@@ -1,0 +1,308 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+정신차리고 잘들어라.
+
+1. https nginx 홈페이지를 만들거야
+- 도메인 dev9.shop, dev.dev9.shop 
+- 공인아이피 112.144.100.239
+1. k8s cluster  를 집에 노트북 7대에 설치했어.
+- master 1 개
+- worker 6 개
+-  calico,  
+- metallb(192.168.0.240), 
+- cert-manager, 
+- clusterissuer, deployment. service, ingress
+
+			sangbinlee9@k8s-master1:~$ kubectl get pod -A -o wide
+			NAMESPACE        NAME                                       READY   STATUS    RESTARTS      AGE     IP                NODE          NOMINATED NODE   READINESS GATES
+			cert-manager     cert-manager-69fd4bc5fc-jfd2g              1/1     Running   3 (8h ago)    2d18h   192.168.194.75    k8s-worker1   <none>           <none>
+			cert-manager     cert-manager-cainjector-85b6d7fc67-lqjl2   1/1     Running   13 (8h ago)   2d18h   192.168.194.77    k8s-worker1   <none>           <none>
+			cert-manager     cert-manager-webhook-cfbc49fc8-7p64l       1/1     Running   2 (8h ago)    2d18h   192.168.126.30    k8s-worker2   <none>           <none>
+			default          cm-acme-http-solver-l7gth                  1/1     Running   0             6h25m   192.168.159.193   k8s-db2       <none>           <none>
+			default          cm-acme-http-solver-ns7vv                  1/1     Running   0             6h25m   192.168.126.35    k8s-worker2   <none>           <none>
+			default          dev9-dev-deployment-778485854-79tkj        1/1     Running   2 (8h ago)    2d17h   192.168.243.135   k8s-db1       <none>           <none>
+			default          dev9-prod-deployment-94767f7b7-2cbgs       1/1     Running   2 (8h ago)    2d17h   192.168.194.76    k8s-worker1   <none>           <none>
+			default          dev9-prod-deployment-94767f7b7-bsclj       1/1     Running   2 (8h ago)    2d17h   192.168.24.195    k8s-worker4   <none>           <none>
+			default          dev9-prod-deployment-94767f7b7-qxg78       1/1     Running   2 (8h ago)    2d17h   192.168.126.31    k8s-worker2   <none>           <none>
+			default          nginx-deployment-6f9664446b-pgwdq          1/1     Running   0             7h47m   192.168.126.34    k8s-worker2   <none>           <none>
+			default          nginx-deployment-6f9664446b-zj7zf          1/1     Running   0             7h47m   192.168.243.136   k8s-db1       <none>           <none>
+			ingress-nginx    ingress-nginx-controller-cc68b44bd-g8j55   1/1     Running   9 (8h ago)    2d16h   192.168.126.28    k8s-worker2   <none>           <none>
+			kube-system      calico-kube-controllers-b45f49df6-j9c2l    1/1     Running   2 (8h ago)    2d18h   192.168.243.134   k8s-db1       <none>           <none>
+			kube-system      calico-node-2l9sk                          1/1     Running   2 (8h ago)    2d18h   192.168.0.20      k8s-worker1   <none>           <none>
+			kube-system      calico-node-2zghj                          1/1     Running   2 (8h ago)    2d18h   192.168.0.15      k8s-worker3   <none>           <none>
+			kube-system      calico-node-jdgd9                          1/1     Running   2 (8h ago)    2d18h   192.168.0.14      k8s-worker4   <none>           <none>
+			kube-system      calico-node-jszpg                          1/1     Running   2 (8h ago)    2d18h   192.168.0.13      k8s-db2       <none>           <none>
+			kube-system      calico-node-k5hc2                          1/1     Running   2 (8h ago)    2d18h   192.168.0.12      k8s-db1       <none>           <none>
+			kube-system      calico-node-mjrr2                          1/1     Running   3 (9h ago)    2d18h   192.168.0.5       k8s-master1   <none>           <none>
+			kube-system      calico-node-qqp7t                          1/1     Running   2 (8h ago)    2d18h   192.168.0.21      k8s-worker2   <none>           <none>
+			kube-system      coredns-66bc5c9577-g59wf                   1/1     Running   3 (9h ago)    2d18h   192.168.159.135   k8s-master1   <none>           <none>
+			kube-system      coredns-66bc5c9577-grr96                   1/1     Running   3 (9h ago)    2d18h   192.168.159.136   k8s-master1   <none>           <none>
+			kube-system      etcd-k8s-master1                           1/1     Running   13 (9h ago)   2d18h   192.168.0.5       k8s-master1   <none>           <none>
+			kube-system      kube-apiserver-k8s-master1                 1/1     Running   4 (9h ago)    2d18h   192.168.0.5       k8s-master1   <none>           <none>
+			kube-system      kube-controller-manager-k8s-master1        1/1     Running   5 (9h ago)    2d18h   192.168.0.5       k8s-master1   <none>           <none>
+			kube-system      kube-proxy-574kf                           1/1     Running   2 (8h ago)    2d18h   192.168.0.12      k8s-db1       <none>           <none>
+			kube-system      kube-proxy-cv9fn                           1/1     Running   2 (8h ago)    2d18h   192.168.0.14      k8s-worker4   <none>           <none>
+			kube-system      kube-proxy-jhhzb                           1/1     Running   2 (8h ago)    2d18h   192.168.0.13      k8s-db2       <none>           <none>
+			kube-system      kube-proxy-m2dgd                           1/1     Running   3 (9h ago)    2d18h   192.168.0.5       k8s-master1   <none>           <none>
+			kube-system      kube-proxy-rp7kb                           1/1     Running   2 (8h ago)    2d18h   192.168.0.15      k8s-worker3   <none>           <none>
+			kube-system      kube-proxy-wgmml                           1/1     Running   2 (8h ago)    2d18h   192.168.0.20      k8s-worker1   <none>           <none>
+			kube-system      kube-proxy-zlnn8                           1/1     Running   2 (8h ago)    2d18h   192.168.0.21      k8s-worker2   <none>           <none>
+			kube-system      kube-scheduler-k8s-master1                 1/1     Running   5 (9h ago)    2d18h   192.168.0.5       k8s-master1   <none>           <none>
+			metallb-system   controller-6599cd9c46-qklts                1/1     Running   10 (8h ago)   2d16h   192.168.126.29    k8s-worker2   <none>           <none>
+			metallb-system   speaker-4mpzm                              1/1     Running   4 (8h ago)    2d16h   192.168.0.13      k8s-db2       <none>           <none>
+			metallb-system   speaker-8qscd                              1/1     Running   4 (8h ago)    2d16h   192.168.0.15      k8s-worker3   <none>           <none>
+			metallb-system   speaker-9z6fm                              1/1     Running   4 (8h ago)    2d16h   192.168.0.12      k8s-db1       <none>           <none>
+			metallb-system   speaker-gfjff                              1/1     Running   11 (9h ago)   2d16h   192.168.0.5       k8s-master1   <none>           <none>
+			metallb-system   speaker-gs6vg                              1/1     Running   9 (8h ago)    2d16h   192.168.0.21      k8s-worker2   <none>           <none>
+			metallb-system   speaker-hcvsg                              1/1     Running   8 (8h ago)    2d16h   192.168.0.20      k8s-worker1   <none>           <none>
+			metallb-system   speaker-jhk56                              1/1     Running   4 (8h ago)    2d16h   192.168.0.14      k8s-worker4   <none>           <none>
+
+
+
+3. 
+
+4. 이메일 sangbinlee9@gmail.com 
+
+
+
+
+
+공인 아이피는 112.144.100.239 이야
+
+
+
+
+
+
+
+Ingress Controller IP 확인: MetalLB가 NGINX Ingress Controller 서비스에 112.144.100.239를 할당했는지 확인합니다.
+
+
+
+
+#############################
+#############################
+
+#############################
+#############################
+
+sangbinlee9@k8s-master1:~$ kubectl get certificate
+NAME              READY   SECRET            AGE
+shop-tls-secret   False   shop-tls-secret   4h24m
+sangbinlee9@k8s-master1:~$
+
+sangbinlee9@k8s-master1:~$ kubectl describe ingress shop-tls-ingress
+
+
+
+#############################
+#############################
+
+가장 가능성이 높은 원인:
+
+	DNS 전파 지연 또는 설정 오류: 112.144.100.239로 A 레코드 설정이 완료되지 않았거나 잘못 설정됨.
+
+	Cert-Manager Challenge 실패: DNS 문제로 인해 Let's Encrypt가 도메인 검증을 하지 못해 인증서 발급에 실패함.
+
+	MetalLB IP 할당 실패: Ingress Controller Service의 EXTERNAL-IP가 설정한 공인 IP와 일치하지 않음.
+
+	어떤 단계를 확인하셨을 때 가장 먼저 문제가 발견되었는지 알려주시면, 그 부분에 초점을 맞춰 해결책을 제시해 드리겠습니다.
+#############################
+#############################
+#############################
+#############################
+
+B. Challenge (도메인 검증) 로그 확인
+	READY가 False라면, Order나 Challenge 리소스를 확인하여 실패 이유를 파악해야 합니다.
+
+	Bash
+
+	# Order 리소스 확인 (자동 생성됨)
+	kubectl get order
+	# Challenge 리소스 확인 (자동 생성됨)
+	kubectl get challenge -o wide
+	challenge 리소스의 State가 valid가 아니라면, DNS 설정 문제나 Ingress Controller 접근 문제로 인해 Let's Encrypt의 검증 요청이 NGINX Pod까지 도달하지 못했다는 의미입니다.
+
+
+#############################
+#############################
+
+
+kubectl describe ingress ingress-nginx
+
+
+
+
+#############################
+#############################
+
+
+ingress-nginx    ingress-nginx-controller             LoadBalancer   10.100.120.72    192.168.0.240   80:32029/TCP,443:31041/TCP   2d16h
+shop-tls-ingress            nginx    dev9.shop,dev.dev9.shop   192.168.0.240   80, 443   2d15h
+shop-tls-secret   False   shop-tls-secret   3h59m
+
+
+sangbinlee9@k8s-master1:~$ kubectl get ingress
+
+
+sangbinlee9@k8s-master1:~$ kubectl get certificate shop-tls-secret
+
+
+iptime 공유기
+192.168.0.240F0:92:1C:5E:D8:C0유선연결 (LAN 2) : 자동할당k8s-worker2
+
+
+
+
+
+
+sangbinlee9@k8s-master1:~$ kubectl get pod -l app=shop-app 
+NAME                                   READY   STATUS    RESTARTS        AGE
+dev9-dev-deployment-778485854-79tkj    1/1     Running   2 (5h52m ago)   2d15h
+dev9-prod-deployment-94767f7b7-2cbgs   1/1     Running   2 (5h56m ago)   2d15h
+dev9-prod-deployment-94767f7b7-bsclj   1/1     Running   2 (5h52m ago)   2d15h
+dev9-prod-deployment-94767f7b7-qxg78   1/1     Running   2 (5h55m ago)   2d15h
+sangbinlee9@k8s-master1:~$
+
+
+kubectl get pod -l app=shop-app -o wide
+
+
+kubectl logs -f 
+
+
+
+
+
+
+sangbinlee9@k8s-master1:~$ kubectl get pod -l app=shop-app -o wide -A
+NAMESPACE   NAME                                   READY   STATUS    RESTARTS        AGE     IP                NODE          NOMINATED NODE   READINESS GATES
+default     dev9-dev-deployment-778485854-79tkj    1/1     Running   2 (5h53m ago)   2d15h   192.168.243.135   k8s-db1       <none>           <none>
+default     dev9-prod-deployment-94767f7b7-2cbgs   1/1     Running   2 (5h57m ago)   2d15h   192.168.194.76    k8s-worker1   <none>           <none>
+default     dev9-prod-deployment-94767f7b7-bsclj   1/1     Running   2 (5h53m ago)   2d15h   192.168.24.195    k8s-worker4   <none>           <none>
+default     dev9-prod-deployment-94767f7b7-qxg78   1/1     Running   2 (5h56m ago)   2d15h   192.168.126.31    k8s-worker2   <none>           <none>
+sangbinlee9@k8s-master1:~$
+
+
+
+
+
+
+
+
+
+
+
+
+sangbinlee9@k8s-worker2:~$ ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host noprefixroute
+       valid_lft forever preferred_lft forever
+2: enp0s25: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether f0:92:1c:5e:d8:c0 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.0.21/24 metric 100 brd 192.168.0.255 scope global dynamic enp0s25
+       valid_lft 4882sec preferred_lft 4882sec
+    inet6 fe80::f292:1cff:fe5e:d8c0/64 scope link
+       valid_lft forever preferred_lft forever
+3: cali78336d4d911@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1480 qdisc noqueue state UP group default
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netns cni-6d48aecf-06b4-6830-bf80-83231e45e794
+    inet6 fe80::ecee:eeff:feee:eeee/64 scope link
+       valid_lft forever preferred_lft forever
+4: calid9d69af2f79@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1480 qdisc noqueue state UP group default
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netns cni-edf67d5d-80d2-5145-3a35-121872b82963
+    inet6 fe80::ecee:eeff:feee:eeee/64 scope link
+       valid_lft forever preferred_lft forever
+5: calib1ede1ce236@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1480 qdisc noqueue state UP group default
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netns cni-694cd180-c43c-933d-a258-8d14e687eedf
+    inet6 fe80::ecee:eeff:feee:eeee/64 scope link
+       valid_lft forever preferred_lft forever
+6: tunl0@NONE: <NOARP,UP,LOWER_UP> mtu 1480 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/ipip 0.0.0.0 brd 0.0.0.0
+    inet 192.168.126.0/32 scope global tunl0
+       valid_lft forever preferred_lft forever
+9: cali049679c9630@if4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1480 qdisc noqueue state UP group default
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netns cni-7440d7b6-84e5-5e6e-ec8a-f41e65ee6946
+    inet6 fe80::ecee:eeff:feee:eeee/64 scope link
+       valid_lft forever preferred_lft forever
+12: cali2d92205a98e@if4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1480 qdisc noqueue state UP group default
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netns cni-e34a72eb-715f-ca4b-25ce-828441cc232a
+    inet6 fe80::ecee:eeff:feee:eeee/64 scope link
+       valid_lft forever preferred_lft forever
+13: cali7aaf022baec@if4: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1480 qdisc noqueue state UP group default
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netns cni-2fb6e08f-aa32-7a60-250a-1397ee6bec2e
+    inet6 fe80::ecee:eeff:feee:eeee/64 scope link
+       valid_lft forever preferred_lft forever
+sangbinlee9@k8s-worker2:~$
+
+
+
+
+
+
+
+
+
+
+k8s reset 
+	노드 아이피가 변경된경우 
+	
+	
+	
+	
+	
+	
+	sudo rm -rf /etc/cni/net.d
+	
+	# IPv4 규칙 초기화
+sudo iptables -F && sudo iptables -X
+sudo iptables -t nat -F && sudo iptables -t nat -X
+sudo iptables -t raw -F && sudo iptables -t raw -X
+sudo iptables -t mangle -F && sudo iptables -t mangle -X
+
+# IPv6 규칙 초기화 (선택 사항)
+sudo ip6tables -F && sudo ip6tables -X
+
+
+
+sudo systemctl daemon-reload
+sudo systemctl status kubelet
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+sangbinlee9@k8s-master1:~$ kubectl get challenge
+NAME                                      STATE     DOMAIN          AGE
+shop-tls-secret-1-1055312325-3104090271   pending   dev.dev9.shop   111m
+shop-tls-secret-1-1055312325-3266165854   pending   dev9.shop       111m
+sangbinlee9@k8s-master1:~$
+

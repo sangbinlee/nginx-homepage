@@ -1,0 +1,151 @@
+#nexus.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nexus
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nexus-pvc
+  namespace: nexus
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+################## Deployment nexus
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nexus
+  namespace: nexus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nexus
+  template:
+    metadata:
+      labels:
+        app: nexus
+    spec:
+      containers:
+        - name: nexus
+          image: sonatype/nexus3:latest
+          ports:
+            - containerPort: 8081
+          volumeMounts:
+            - name: nexus-data
+              mountPath: /nexus-data
+      volumes:
+        - name: nexus-data
+          persistentVolumeClaim:
+            claimName: nexus-pvc
+
+---
+################## Deployment cake
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-cake
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: wordpress-cake } }
+  template:
+    metadata: { labels: { app: wordpress-cake } }
+    spec:
+      nodeSelector: { kubernetes.io/hostname: k8s-worker1 }
+      containers:
+        - name: wordpress-cake
+          image: wordpress:6.8.3
+          env:
+            - name: WORDPRESS_DB_HOST
+              value: mysql-service
+            - name: WORDPRESS_DB_USER
+              value: wpuser-cake
+            - name: WORDPRESS_DB_PASSWORD
+              value: wppass-cake
+            - name: WORDPRESS_DB_NAME
+              value: wpdb-cake
+          ports: [{ containerPort: 80 }]
+
+---
+################## Service nexus
+apiVersion: v1
+kind: Service
+metadata:
+  name: nexus-service
+  namespace: nexus
+spec:
+  selector:
+    app: nexus
+  ports:
+    - port: 80
+      targetPort: 8081
+
+---
+################## Service cake
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-cake
+spec:
+  selector: { app: wordpress-cake }
+  ports: [{ port: 80, targetPort: 80 }]
+
+---
+################## ingress nexus
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nexus-ingress
+  namespace: nexus
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: nexus.dev9.shop
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nexus-service
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - nexus.dev9.shop
+      secretName: nexus-tls
+---
+################## ingress cake
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: cake-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: cake.dev9.shop
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: wordpress-cake
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - cake.dev9.shop
+      secretName: cake-tls
