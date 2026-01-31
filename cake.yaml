@@ -121,3 +121,18 @@ spec:
     - hosts:
         - cake.dev9.shop
       secretName: cake-tls
+
+
+
+
+
+
+
+
+
+
+
+CREATE DATABASE wpdb_cake;
+CREATE USER 'wpuser-cake'@'%' IDENTIFIED BY 'wppass-cake';
+GRANT ALL PRIVILEGES ON wpdb_cake.* TO 'wpuser-cake'@'%';
+FLUSH PRIVILEGES;
